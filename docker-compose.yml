@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  server:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -lc "cd server && npm install && npm run prod:server"
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      SERVER_PORT: 3001
+    env_file:
+      - ./server/.env
+
+  collector:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -lc "cd collector && npm install && npm run start"
+    ports:
+      - "8888:8888"
+    environment:
+      NODE_ENV: production
+    env_file:
+      - ./server/.env
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -lc "cd frontend && npm install && npm run build && npm run preview -- --host 0.0.0.0 --port 5173"
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: production
+    env_file:
+      - ./server/.env
